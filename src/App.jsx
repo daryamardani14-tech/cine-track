@@ -1,9 +1,12 @@
 import SideBar from "./components/SideBar";
-import Header from "./components/Header";
+import Main from "./components/Main";
+import Aside from "./components/Aside";
 export default function App() {
   return (
-    <div>
+    <div className="flex min-h-screen">
       <SideBar />
+      <Main />
+      <Aside />
     </div>
   );
 }
