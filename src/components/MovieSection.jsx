@@ -1,53 +1,67 @@
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import MovieCard from "./MovieCard";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function MovieSection() {
-  console.log("MovieSection rendered");
+export default function MovieSection({ title, category, endpoint }) {
   const [movieData, setMovieData] = useState([]);
+  const movieListRef = useRef(null);
 
   useEffect(() => {
     async function getMovies() {
-      console.log(import.meta.env.VITE_TMDB_TOKEN);
-      const response = await fetch(
-        "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-            accept: "application/json",
-          },
+      const url = `https://api.themoviedb.org/3/${category}/${endpoint}?language=en-US&page=1`;
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+          accept: "application/json",
         },
-      );
+      });
 
       const data = await response.json();
 
-      console.log(data);
       if (!response.ok) return;
+
       setMovieData(data.results);
     }
 
     getMovies();
-  }, []);
+  }, [category, endpoint]);
+
+  function handleNext() {
+    movieListRef.current.scrollBy({
+      left: 300,
+      behavior: "smooth",
+    });
+  }
+
+  function handlePrevious() {
+    movieListRef.current.scrollBy({
+      left: -300,
+      behavior: "smooth",
+    });
+  }
 
   return (
-    <section>
+    <section className="mt-8">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold">Popular Movies</h2>
+        <h2 className="text-xl font-bold">{title}</h2>
 
         <div className="flex gap-2">
-          <button>
+          <button onClick={handlePrevious}>
             <ChevronLeft size={18} />
           </button>
 
-          <button>
+          <button onClick={handleNext}>
             <ChevronRight size={18} />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div ref={movieListRef} className="flex gap-4 overflow-hidden">
         {movieData.map(movie => (
-          <MovieCard movie={movie} key={movie.id} />
+          <div key={movie.id} className="w-48 shrink-0">
+            <MovieCard movie={movie} />
+          </div>
         ))}
       </div>
     </section>
