@@ -1,9 +1,5 @@
-import {
-  menuItems,
-  libraryItems,
-  categoryItems,
-  generalItems,
-} from "../data/sideBarItem";
+import { menuItems, libraryItems, categoryItems } from "../data/sideBarItem";
+
 import SideBarItem from "./SideBarItem";
 export default function SideBar({ selectedCategory, onSelectedCategory }) {
   const sectionTitelStyle =

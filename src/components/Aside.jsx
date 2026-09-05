@@ -7,6 +7,9 @@ export default function Aside() {
   const [wishlistMovies, setWishlistMovies] = useState([]);
   const [watchedMovies, setWatchedMovies] = useState([]);
 
+  const nextSectionTitleStyle =
+    "mt-8 text-base font-bold tracking-wider text-white mb-5";
+
   function updateMovieLists() {
     setFavoriteMovies(getMovies(STORAGE_KEYS.favorites));
     setWishlistMovies(getMovies(STORAGE_KEYS.wishlists));
@@ -34,7 +37,7 @@ export default function Aside() {
 
   return (
     <aside className="h-full w-80 bg-neutral-900 p-6 text-white">
-      <h2 className="mb-3 text-sm font-bold tracking-wider text-neutral-400">
+      <h2 className="text-base font-bold tracking-wider text-white mb-5">
         ❤️ MY FAVORITES
       </h2>
 
@@ -48,9 +51,7 @@ export default function Aside() {
         ))}
       </div>
 
-      <h2 className="mb-3 mt-8 text-sm font-bold tracking-wider text-neutral-400">
-        🔖 WISHLISTS
-      </h2>
+      <h2 className={nextSectionTitleStyle}>🔖 WISHLISTS</h2>
 
       <div className="flex flex-col gap-3">
         {wishlistMovies.slice(-2).map(movie => (
@@ -62,9 +63,7 @@ export default function Aside() {
         ))}
       </div>
 
-      <h2 className="mb-3 mt-8 text-sm font-bold tracking-wider text-neutral-400">
-        👁 WATCHED
-      </h2>
+      <h2 className={nextSectionTitleStyle}>👁 WATCHED</h2>
 
       <div className="flex flex-col gap-3">
         {watchedMovies.slice(-2).map(movie => (

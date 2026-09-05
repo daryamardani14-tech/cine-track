@@ -5,7 +5,7 @@ import MovieCard from "./MovieCard";
 import { useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 
-export default function Main({ selectedItem }) {
+export default function Main({ selectedItem, onOpenLibrary }) {
   const sections = categorySections[selectedItem];
   const [movies, setMovies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -81,6 +81,7 @@ export default function Main({ selectedItem }) {
         onSearch={setSearchQuery}
         searchResults={searchResults}
         onSelectMovie={setSelectedMovie}
+        onOpenLibrary={onOpenLibrary}
       />
 
       {selectedMovie ? (
