@@ -1,9 +1,11 @@
 import SideBar from "./components/SideBar";
 import Main from "./components/Main";
 import Aside from "./components/Aside";
+import MovieDetail from "./components/MovieDetail";
 import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-export default function App() {
+function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("home");
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
@@ -38,5 +40,17 @@ export default function App() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+
+        <Route path="/movie/:id" element={<MovieDetail />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
