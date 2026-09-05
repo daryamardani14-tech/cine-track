@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 export default function FeaturedMovie() {
   const [movies, setMovies] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(null);
 
   useEffect(() => {
     async function getMovies() {
@@ -22,6 +22,8 @@ export default function FeaturedMovie() {
       if (!response.ok) return;
 
       setMovies(data.results);
+      const randomIndex = Math.floor(Math.random() * data.results.length);
+      setCurrentIndex(randomIndex);
     }
 
     getMovies();
@@ -31,7 +33,7 @@ export default function FeaturedMovie() {
     setCurrentIndex(currentIndex === movies.length - 1 ? 0 : currentIndex + 1);
   }
 
-  if (movies.length === 0) return null;
+  if (movies.length === 0 || currentIndex === null) return null;
 
   const movie = movies[currentIndex];
   const title = movie.title || movie.name;

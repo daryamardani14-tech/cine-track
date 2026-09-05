@@ -2,7 +2,7 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 import MovieCard from "./MovieCard";
 import { useEffect, useRef, useState } from "react";
 
-export default function MovieSection({ title, category, endpoint }) {
+export default function MovieSection({ title, category, endpoint, isHome }) {
   const [movieData, setMovieData] = useState([]);
   const movieListRef = useRef(null);
 
@@ -46,20 +46,26 @@ export default function MovieSection({ title, category, endpoint }) {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold">{title}</h2>
 
-        <div className="flex gap-2">
-          <button onClick={handlePrevious}>
-            <ChevronLeft size={18} />
-          </button>
+        {isHome && (
+          <div className="flex gap-2">
+            <button onClick={handlePrevious}>
+              <ChevronLeft size={18} />
+            </button>
 
-          <button onClick={handleNext}>
-            <ChevronRight size={18} />
-          </button>
-        </div>
+            <button onClick={handleNext}>
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        )}
       </div>
 
-      <div ref={movieListRef} className="flex gap-4 overflow-hidden">
-        {movieData.map(movie => (
-          <div key={movie.id} className="w-48 shrink-0">
+      <div
+        ref={movieListRef}
+        className={
+          isHome ? "flex gap-4 overflow-hidden" : "grid grid-cols-4 gap-4"
+        }>
+        {movieData.slice(0, 8).map(movie => (
+          <div key={movie.id} className={isHome ? "w-48 shrink-0" : "min-w-0"}>
             <MovieCard movie={movie} />
           </div>
         ))}

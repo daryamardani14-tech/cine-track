@@ -2,6 +2,7 @@ import SideBar from "./components/SideBar";
 import Main from "./components/Main";
 import Aside from "./components/Aside";
 import { useState } from "react";
+
 export default function App() {
   const [selectedCategory, setSelectedCategory] = useState("home");
   return (
@@ -10,8 +11,8 @@ export default function App() {
         selectedCategory={selectedCategory}
         onSelectedCategory={setSelectedCategory}
       />
-      <Main selectedItem={selectedCategory} />
-      <div className="hidden xl:block">
+      <Main selectedItem={selectedCategory} key={selectedCategory} />
+      <div className="hidden self-stretch xl:block">
         <Aside />
       </div>
     </div>

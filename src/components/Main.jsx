@@ -3,15 +3,48 @@ import FeaturedMovie from "./FeaturedMovie";
 import MovieSection from "./MovieSection";
 import MovieCard from "./MovieCard";
 import { useEffect, useState } from "react";
+import SearchBar from "./SearchBar";
 
 export default function Main({ selectedItem }) {
   const sections = categorySections[selectedItem];
+  const [movies, setMovies] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+
   const category =
     selectedItem === "tv-series" || selectedItem === "airing-today"
       ? "tv"
       : "movie";
 
-  const [movies, setMovies] = useState([]);
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    async function searchMovies() {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+          searchQuery,
+        )}&language=en-US&page=1`,
+        {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+            accept: "application/json",
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) return;
+
+      setSearchResults(data.results);
+    }
+
+    searchMovies();
+  }, [searchQuery]);
 
   useEffect(() => {
     if (selectedItem !== "movies") return;
@@ -43,33 +76,53 @@ export default function Main({ selectedItem }) {
 
   return (
     <div className="min-w-0 flex-1 bg-neutral-950 p-8 text-white">
-      <FeaturedMovie />
+      <SearchBar
+        searchQuery={searchQuery}
+        onSearch={setSearchQuery}
+        searchResults={searchResults}
+        onSelectMovie={setSelectedMovie}
+      />
 
-      {selectedItem === "movies" ? (
+      {selectedMovie ? (
         <section className="mt-8">
-          <h2 className="mb-4 text-xl font-bold">Movies</h2>
+          <h2 className="mb-4 text-xl font-bold">Search Result</h2>
 
-          <div className="grid grid-cols-4 gap-4">
-            {movies.map(movie => (
-              <MovieCard movie={movie} key={movie.id} />
-            ))}
+          <div className="w-48">
+            <MovieCard movie={selectedMovie} />
           </div>
         </section>
-      ) : sections ? (
-        <>
-          {sections.map(section => (
-            <MovieSection
-              key={`${category}-${section.endpoint}`}
-              title={section.title}
-              category={category}
-              endpoint={section.endpoint}
-            />
-          ))}
-        </>
       ) : (
-        <div className="flex h-full items-center justify-center text-neutral-500">
-          این بخش هنوز آماده نیست
-        </div>
+        <>
+          {selectedItem === "home" && <FeaturedMovie />}
+
+          {selectedItem === "movies" ? (
+            <section className="mt-8">
+              <h2 className="mb-4 text-xl font-bold">Movies</h2>
+
+              <div className="grid grid-cols-4 gap-4">
+                {movies.map(movie => (
+                  <MovieCard movie={movie} key={movie.id} />
+                ))}
+              </div>
+            </section>
+          ) : sections ? (
+            <>
+              {sections.map(section => (
+                <MovieSection
+                  key={`${category}-${section.endpoint}`}
+                  title={section.title}
+                  category={category}
+                  endpoint={section.endpoint}
+                  isHome={selectedItem === "home"}
+                />
+              ))}
+            </>
+          ) : (
+            <div className="flex h-full items-center justify-center text-neutral-500">
+              این بخش هنوز آماده نیست
+            </div>
+          )}
+        </>
       )}
     </div>
   );
