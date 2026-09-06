@@ -1,4 +1,6 @@
 import { X } from "lucide-react";
+import { genreNames } from "../data/genreNames";
+
 export default function UserMovieItem({ movie, onRemove }) {
   const title = movie.title || movie.name;
   const releaseDate = movie.release_date || movie.first_air_date;
@@ -31,17 +33,13 @@ export default function UserMovieItem({ movie, onRemove }) {
         </p>
 
         <div className="mt-2 flex gap-1">
-          <span className="rounded-full bg-neutral-700 px-2 py-1 text-[10px] text-neutral-300">
-            Drama
-          </span>
-
-          <span className="rounded-full bg-neutral-700 px-2 py-1 text-[10px] text-neutral-300">
-            Sci-Fi
-          </span>
-
-          <span className="rounded-full bg-neutral-700 px-2 py-1 text-[10px] text-neutral-300">
-            Action
-          </span>
+          {movie.genre_ids?.slice(0, 3).map(id => (
+            <span
+              key={id}
+              className="rounded-full bg-neutral-700 px-2 py-1 text-[10px] text-neutral-300">
+              {genreNames[id]}
+            </span>
+          ))}
         </div>
       </div>
     </div>

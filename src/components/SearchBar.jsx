@@ -1,4 +1,4 @@
-import { Search, Menu } from "lucide-react";
+import { Search, Library } from "lucide-react";
 
 export default function SearchBar({
   searchQuery,
@@ -54,8 +54,8 @@ export default function SearchBar({
 
       <button
         onClick={onOpenLibrary}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-900 text-neutral-400 transition hover:border-red-500 hover:text-red-500 xl:hidden">
-        <Menu size={20} />
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-900 text-neutral-400 transition hover:border-red-500 hover:text-red-500">
+        <Library size={20} />
       </button>
     </div>
   );

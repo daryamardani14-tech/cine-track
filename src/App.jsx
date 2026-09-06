@@ -2,6 +2,7 @@ import SideBar from "./components/SideBar";
 import Main from "./components/Main";
 import Aside from "./components/Aside";
 import MovieDetail from "./components/MovieDetail";
+import Library from "./components/Library";
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -10,7 +11,7 @@ function Dashboard() {
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="relative flex min-h-screen">
       <SideBar
         selectedCategory={selectedCategory}
         onSelectedCategory={setSelectedCategory}
@@ -22,13 +23,13 @@ function Dashboard() {
         onOpenLibrary={() => setIsLibraryOpen(true)}
       />
 
-      <div className="hidden self-stretch xl:block">
-        <Aside />
-      </div>
-
       {isLibraryOpen && (
-        <div className="fixed inset-0 z-40 bg-black/60 xl:hidden">
-          <div className="absolute right-0 top-0 h-full">
+        <div
+          onClick={() => setIsLibraryOpen(false)}
+          className="fixed inset-0 z-40 bg-black/60">
+          <div
+            onClick={e => e.stopPropagation()}
+            className="absolute right-0 top-0 h-full">
             <button
               onClick={() => setIsLibraryOpen(false)}
               className="absolute right-4 top-4 z-10 text-xl text-red-500">
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="/" element={<Dashboard />} />
 
         <Route path="/movie/:id" element={<MovieDetail />} />
+        <Route path="/library/:type" element={<Library />} />
       </Routes>
     </BrowserRouter>
   );
