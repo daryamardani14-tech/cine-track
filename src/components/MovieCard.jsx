@@ -12,17 +12,27 @@ export default function MovieCard({ movie }) {
   const [isWatched, setIsWatched] = useState(false);
 
   useEffect(() => {
-    setIsFavorite(
-      getMovies(STORAGE_KEYS.favorites).some(item => item.id === movie.id),
-    );
+    function updateMovieStatus() {
+      setIsFavorite(
+        getMovies(STORAGE_KEYS.favorites).some(item => item.id === movie.id),
+      );
 
-    setIsWishlist(
-      getMovies(STORAGE_KEYS.wishlists).some(item => item.id === movie.id),
-    );
+      setIsWishlist(
+        getMovies(STORAGE_KEYS.wishlists).some(item => item.id === movie.id),
+      );
 
-    setIsWatched(
-      getMovies(STORAGE_KEYS.watched).some(item => item.id === movie.id),
-    );
+      setIsWatched(
+        getMovies(STORAGE_KEYS.watched).some(item => item.id === movie.id),
+      );
+    }
+
+    updateMovieStatus();
+
+    window.addEventListener("movieListUpdated", updateMovieStatus);
+
+    return () => {
+      window.removeEventListener("movieListUpdated", updateMovieStatus);
+    };
   }, [movie.id]);
 
   function handleToggle(key, isSelected, setIsSelected) {

@@ -17,7 +17,7 @@ export default function SideBar({ selectedCategory, onSelectedCategory }) {
     ));
 
   return (
-    <div className="w-64 min-h-screen flex flex-col bg-neutral-900 p-6 text-white">
+    <div className="hidden md:flex xl:w-64 lg:w-56 min-h-screen flex-col bg-neutral-900 p-6 text-white">
       <h1 className="mb-8 font-bold text-3xl">
         Watch<div className="inline-block w-1 h-1 bg-red-500"></div>
       </h1>
