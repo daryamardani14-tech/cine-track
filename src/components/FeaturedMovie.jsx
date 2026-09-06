@@ -45,7 +45,7 @@ export default function FeaturedMovie() {
     .slice(0, 3);
 
   return (
-    <section className="relative h-[420px] overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-800">
+    <section className="relative h-[490px] overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-800 sm:h-[340px] lg:h-[360px] xl:h-[400px]">
       <img
         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
         alt={title}
