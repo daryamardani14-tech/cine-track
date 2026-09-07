@@ -76,13 +76,29 @@ export default function Main({ selectedItem, onOpenLibrary }) {
 
   return (
     <div className="min-w-0 flex-1 bg-neutral-950 p-8 text-white">
-      <SearchBar
-        searchQuery={searchQuery}
-        onSearch={setSearchQuery}
-        searchResults={searchResults}
-        onSelectMovie={setSelectedMovie}
-        onOpenLibrary={onOpenLibrary}
-      />
+      {selectedItem === "home" && !selectedMovie ? (
+        <div className="relative -mx-8 -mt-8">
+          <FeaturedMovie />
+
+          <div className="absolute left-8 right-8 top-8 z-20">
+            <SearchBar
+              searchQuery={searchQuery}
+              onSearch={setSearchQuery}
+              searchResults={searchResults}
+              onSelectMovie={setSelectedMovie}
+              onOpenLibrary={onOpenLibrary}
+            />
+          </div>
+        </div>
+      ) : (
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearch={setSearchQuery}
+          searchResults={searchResults}
+          onSelectMovie={setSelectedMovie}
+          onOpenLibrary={onOpenLibrary}
+        />
+      )}
 
       {selectedMovie ? (
         <section className="mt-8">
@@ -94,13 +110,11 @@ export default function Main({ selectedItem, onOpenLibrary }) {
         </section>
       ) : (
         <>
-          {selectedItem === "home" && <FeaturedMovie />}
-
           {selectedItem === "movies" ? (
             <section className="mt-8">
               <h2 className="mb-4 text-xl font-bold">Movies</h2>
 
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                 {movies.map(movie => (
                   <MovieCard movie={movie} key={movie.id} />
                 ))}

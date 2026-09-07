@@ -24,4 +24,6 @@ export const categorySections = {
   ],
 
   "airing-today": [{ title: "Airing Today", endpoint: "airing_today" }],
+
+  "all-movies": [{ title: "All Movies", endpoint: "discover" }],
 };

@@ -52,12 +52,12 @@ export default function MovieCard({ movie }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl bg-neutral-800">
+    <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md">
       <Link to={`/movie/${movie.id}`}>
         <img
           src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
           alt={title}
-          className="h-64 w-full object-cover"
+          className="aspect-[2/3] w-full object-cover"
         />
 
         <div className="p-3">

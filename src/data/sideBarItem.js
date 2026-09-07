@@ -1,4 +1,4 @@
-import { Home, Compass, Star, PlayCircle, Tv, Clock } from "lucide-react";
+import { Home, Compass, Star, PlayCircle, Tv, Clock, Film } from "lucide-react";
 
 export const menuItems = [
   { id: "home", label: "Home", icon: Home },
@@ -13,6 +13,11 @@ export const libraryItems = [
 
 export const categoryItems = [
   { id: "airing-today", label: "Airing Today", icon: Clock },
+  {
+    id: "all-movies",
+    label: "All Movies",
+    icon: Film,
+  },
 ];
 
 export const generalItems = [];

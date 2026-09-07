@@ -5,10 +5,18 @@ import { useEffect, useRef, useState } from "react";
 export default function MovieSection({ title, category, endpoint, isHome }) {
   const [movieData, setMovieData] = useState([]);
   const movieListRef = useRef(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function getMovies() {
-      const url = `https://api.themoviedb.org/3/${category}/${endpoint}?language=en-US&page=1`;
+      setLoading(true);
+
+      const url =
+        endpoint === "discover"
+          ? `https://api.themoviedb.org/3/discover/movie?language=en-US&page=${page}`
+          : `https://api.themoviedb.org/3/${category}/${endpoint}?language=en-US&page=1`;
 
       const response = await fetch(url, {
         headers: {
@@ -19,13 +27,44 @@ export default function MovieSection({ title, category, endpoint, isHome }) {
 
       const data = await response.json();
 
-      if (!response.ok) return;
+      if (!response.ok) {
+        setLoading(false);
+        return;
+      }
 
-      setMovieData(data.results);
+      if (endpoint === "discover") {
+        setMovieData(currentMovies => [...currentMovies, ...data.results]);
+        setHasMore(page < data.total_pages);
+      } else {
+        setMovieData(data.results);
+      }
+
+      setLoading(false);
     }
 
     getMovies();
-  }, [category, endpoint]);
+  }, [category, endpoint, page]);
+
+  useEffect(() => {
+    if (endpoint !== "discover") return;
+
+    function handleScroll() {
+      if (
+        window.innerHeight + window.scrollY >=
+          document.documentElement.scrollHeight - 500 &&
+        !loading &&
+        hasMore
+      ) {
+        setPage(currentPage => currentPage + 1);
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [endpoint, loading, hasMore]);
 
   function handleNext() {
     movieListRef.current.scrollBy({
@@ -48,11 +87,15 @@ export default function MovieSection({ title, category, endpoint, isHome }) {
 
         {isHome && (
           <div className="flex gap-2">
-            <button onClick={handlePrevious}>
+            <button
+              onClick={handlePrevious}
+              className="rounded-lg p-2 text-neutral-400 transition hover:bg-neutral-800 hover:text-white">
               <ChevronLeft size={18} />
             </button>
 
-            <button onClick={handleNext}>
+            <button
+              onClick={handleNext}
+              className="rounded-lg p-2 text-neutral-400 transition hover:bg-neutral-800 hover:text-white">
               <ChevronRight size={18} />
             </button>
           </div>
@@ -62,14 +105,32 @@ export default function MovieSection({ title, category, endpoint, isHome }) {
       <div
         ref={movieListRef}
         className={
-          isHome ? "flex gap-4 overflow-hidden" : "grid grid-cols-4 gap-4"
+          isHome
+            ? "flex gap-4 overflow-hidden"
+            : "grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5"
         }>
-        {movieData.slice(0, 8).map(movie => (
-          <div key={movie.id} className={isHome ? "w-48 shrink-0" : "min-w-0"}>
-            <MovieCard movie={movie} />
-          </div>
-        ))}
+        {(endpoint === "discover" ? movieData : movieData.slice(0, 20)).map(
+          movie => (
+            <div
+              key={movie.id}
+              className={isHome ? "w-48 shrink-0" : "min-w-0"}>
+              <MovieCard movie={movie} />
+            </div>
+          ),
+        )}
       </div>
+
+      {endpoint === "discover" && loading && (
+        <p className="mt-6 text-center text-sm text-neutral-500">
+          Loading more movies...
+        </p>
+      )}
+
+      {endpoint === "discover" && !hasMore && (
+        <p className="mt-6 text-center text-sm text-neutral-500">
+          No more movies.
+        </p>
+      )}
     </section>
   );
 }

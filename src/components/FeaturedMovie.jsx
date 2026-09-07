@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import { genreNames } from "../data/genreNames";
 
 export default function FeaturedMovie() {
   const [movies, setMovies] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(null);
+  const imagePosition = "100% 10%";
 
   useEffect(() => {
     async function getMovies() {
@@ -23,6 +24,7 @@ export default function FeaturedMovie() {
       if (!response.ok) return;
 
       setMovies(data.results);
+
       const randomIndex = Math.floor(Math.random() * data.results.length);
       setCurrentIndex(randomIndex);
     }
@@ -32,6 +34,10 @@ export default function FeaturedMovie() {
 
   function handleNext() {
     setCurrentIndex(currentIndex === movies.length - 1 ? 0 : currentIndex + 1);
+  }
+
+  function handlePrevious() {
+    setCurrentIndex(currentIndex === 0 ? movies.length - 1 : currentIndex - 1);
   }
 
   if (movies.length === 0 || currentIndex === null) return null;
@@ -45,16 +51,15 @@ export default function FeaturedMovie() {
     .slice(0, 3);
 
   return (
-    <section className="relative h-[490px] overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-800 sm:h-[340px] lg:h-[360px] xl:h-[400px]">
+    <section className="relative h-[360px] sm:h-[480px] bg-neutral-950">
       <img
         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
         alt={title}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full  w-full object-cover z-0"
+        style={{ objectPosition: imagePosition }}
       />
-
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-
-      <div className="absolute bottom-8 left-8 z-10">
+      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      <div className="absolute bottom-10 left-8 z-10">
         <h2 className="mb-3 text-4xl font-bold">{title}</h2>
 
         <div className="flex flex-wrap gap-2">
@@ -68,11 +73,21 @@ export default function FeaturedMovie() {
         </div>
       </div>
 
-      <div className="absolute right-4 top-1/2 z-10 -translate-y-1/2">
+      <div className="absolute left-3 top-1/2 z-10 -translate-y-1/2 sm:left-4">
+        <button
+          onClick={handlePrevious}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-neutral-500/30 text-white backdrop-blur-md transition hover:bg-neutral-500/50 sm:h-12 sm:w-12">
+          <ChevronLeft size={18} className="sm:hidden" />
+          <ChevronLeft size={24} className="hidden sm:block" />
+        </button>
+      </div>
+
+      <div className="absolute right-3 top-1/2 z-10 -translate-y-1/2 sm:right-4">
         <button
           onClick={handleNext}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-neutral-500/30 text-white backdrop-blur-md transition hover:bg-neutral-500/50">
-          <ChevronRight size={24} />
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-neutral-500/30 text-white backdrop-blur-md transition hover:bg-neutral-500/50 sm:h-12 sm:w-12">
+          <ChevronRight size={18} className="sm:hidden" />
+          <ChevronRight size={24} className="hidden sm:block" />
         </button>
       </div>
     </section>

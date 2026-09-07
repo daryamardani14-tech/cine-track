@@ -20,7 +20,7 @@ export default function SearchBar({
           value={searchQuery}
           onChange={e => onSearch(e.target.value)}
           placeholder="Search movies..."
-          className="w-full rounded-xl border border-neutral-700 bg-neutral-900 py-2.5 pl-12 pr-4 text-white outline-none placeholder:text-neutral-500 focus:border-red-500"
+          className="w-full rounded-xl border border-white/10 bg-white/10 py-1.5 pl-12 pr-4 text-sm text-white outline-none backdrop-blur-md placeholder:text-neutral-400 focus:border-white/20 shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
         />
 
         {searchResults.length > 0 && (
@@ -54,8 +54,8 @@ export default function SearchBar({
 
       <button
         onClick={onOpenLibrary}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-900 text-neutral-400 transition hover:border-red-500 hover:text-red-500">
-        <Library size={20} />
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-neutral-400 backdrop-blur-md transition hover:border-red-500 hover:bg-white/15 hover:text-red-500 sm:h-9 sm:w-9 shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
+        <Library size={17} />
       </button>
     </div>
   );
