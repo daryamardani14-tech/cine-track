@@ -32,7 +32,7 @@ export default function UserMovieItem({ movie, onRemove }) {
           {releaseDate?.slice(0, 4)}
         </p>
 
-        <div className="mt-2 flex gap-1">
+        <div className="mt-2 flex flex-wrap gap-1">
           {movie.genre_ids?.slice(0, 3).map(id => (
             <span
               key={id}

@@ -2,6 +2,7 @@ import { Star, Heart, Bookmark, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getMovies, toggleMovie, STORAGE_KEYS } from "../utils/movieStorage";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function MovieCard({ movie }) {
   const title = movie.title || movie.name;
@@ -39,6 +40,19 @@ export default function MovieCard({ movie }) {
     const newStatus = toggleMovie(key, movie);
 
     setIsSelected(newStatus);
+    if (newStatus) {
+      if (key === STORAGE_KEYS.favorites) {
+        toast.success(`${title} added to Favorites`);
+      }
+
+      if (key === STORAGE_KEYS.wishlists) {
+        toast.success(`${title} added to Wishlist`);
+      }
+
+      if (key === STORAGE_KEYS.watched) {
+        toast.success(`${title} marked as Watched`);
+      }
+    }
 
     if (key === STORAGE_KEYS.wishlists && newStatus) {
       setIsWatched(false);
