@@ -2,7 +2,7 @@
 
 A movie discovery and tracking web app built with React.
 
-[GitHub Repository](https://github.com/daryamardani14-tech/cine-track) · Live Demo coming soon
+[GitHub Repository](https://github.com/daryamardani14-tech/cine-track) · [Live Demo](https://cine-track.daryamardani14.workers.dev)
 
 ![CineTrack Preview](public/cine-track-preview.png)
 
