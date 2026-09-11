@@ -65,12 +65,12 @@ export default function MovieCard({ movie }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md">
+    <div className="group overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md transition-transform duration-300 hover:-translate-y-1">
       <Link to={`/movie/${movie.id}`}>
         <img
           src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
           alt={title}
-          className="aspect-[2/3] w-full object-cover"
+          className="aspect-[2/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
 
         <div className="p-3">
@@ -93,7 +93,7 @@ export default function MovieCard({ movie }) {
             onClick={() =>
               handleToggle(STORAGE_KEYS.favorites, isFavorite, setIsFavorite)
             }
-            className={`transition ${
+            className={`transition-transform duration-200 hover:scale-110 ${
               isFavorite
                 ? "text-red-500"
                 : "text-neutral-400 hover:text-red-500"
@@ -105,7 +105,7 @@ export default function MovieCard({ movie }) {
             onClick={() =>
               handleToggle(STORAGE_KEYS.wishlists, isWishlist, setIsWishlist)
             }
-            className={`transition ${
+            className={`transition-transform duration-200 hover:scale-110 ${
               isWishlist
                 ? "text-red-500"
                 : "text-neutral-400 hover:text-red-500"
@@ -117,7 +117,7 @@ export default function MovieCard({ movie }) {
             onClick={() =>
               handleToggle(STORAGE_KEYS.watched, isWatched, setIsWatched)
             }
-            className={`transition ${
+            className={`transition-transform duration-200 hover:scale-110 ${
               isWatched ? "text-red-500" : "text-neutral-400 hover:text-red-500"
             }`}>
             <Eye size={17} />

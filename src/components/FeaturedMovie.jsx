@@ -5,6 +5,7 @@ import { genreNames } from "../data/genreNames";
 export default function FeaturedMovie() {
   const [movies, setMovies] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(null);
+  const [isChanging, setIsChanging] = useState(false);
   const imagePosition = "100% 10%";
 
   useEffect(() => {
@@ -33,12 +34,43 @@ export default function FeaturedMovie() {
   }, []);
 
   function handleNext() {
-    setCurrentIndex(currentIndex === movies.length - 1 ? 0 : currentIndex + 1);
+    setIsChanging(true);
+
+    setTimeout(() => {
+      setCurrentIndex(
+        currentIndex === movies.length - 1 ? 0 : currentIndex + 1,
+      );
+      setIsChanging(false);
+    }, 300);
   }
 
   function handlePrevious() {
-    setCurrentIndex(currentIndex === 0 ? movies.length - 1 : currentIndex - 1);
+    setIsChanging(true);
+
+    setTimeout(() => {
+      setCurrentIndex(
+        currentIndex === 0 ? movies.length - 1 : currentIndex - 1,
+      );
+      setIsChanging(false);
+    }, 300);
   }
+
+  useEffect(() => {
+    if (movies.length === 0 || currentIndex === null) return;
+
+    const interval = setInterval(() => {
+      setIsChanging(true);
+
+      setTimeout(() => {
+        setCurrentIndex(currentIndex =>
+          currentIndex === movies.length - 1 ? 0 : currentIndex + 1,
+        );
+        setIsChanging(false);
+      }, 300);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [movies.length, currentIndex]);
 
   if (movies.length === 0 || currentIndex === null) return null;
 
@@ -55,7 +87,9 @@ export default function FeaturedMovie() {
       <img
         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
         alt={title}
-        className="absolute inset-0 h-full  w-full object-cover z-0"
+        className={`absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-700 ${
+          isChanging ? "opacity-0" : "opacity-100"
+        }`}
         style={{ objectPosition: imagePosition }}
       />
       <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />

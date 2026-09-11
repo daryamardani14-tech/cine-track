@@ -102,7 +102,7 @@ export default function Main({
         </>
       ) : (
         <div className="flex h-full items-center justify-center text-neutral-500">
-          این بخش هنوز آماده نیست
+          This section is not ready.
         </div>
       )}
     </div>

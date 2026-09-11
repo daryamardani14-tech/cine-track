@@ -6,6 +6,7 @@ import Library from "./components/Library";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import CustomCursor from "./components/CustomCursor";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -89,6 +90,7 @@ function Dashboard() {
 export default function App() {
   return (
     <BrowserRouter>
+      <CustomCursor />
       <Toaster position="top-center" />
       <Routes>
         <Route path="/" element={<Dashboard />} />
