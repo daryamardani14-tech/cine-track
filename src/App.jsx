@@ -89,25 +89,7 @@ function Dashboard() {
 export default function App() {
   return (
     <BrowserRouter>
-      <Toaster
-        toastOptions={{
-          style: {
-            background: "rgba(38, 38, 38, 0.9)",
-            color: "#fff",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            borderRadius: "12px",
-            backdropFilter: "blur(12px)",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.35)",
-            fontSize: "13px",
-          },
-          success: {
-            iconTheme: {
-              primary: "#ef4444",
-              secondary: "#fff",
-            },
-          },
-        }}
-      />
+      <Toaster position="top-center" />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/movie/:id" element={<MovieDetail />} />

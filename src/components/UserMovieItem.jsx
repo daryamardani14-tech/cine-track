@@ -1,9 +1,23 @@
 import { X } from "lucide-react";
 import { genreNames } from "../data/genreNames";
+import { useState } from "react";
+import { showMovieToast } from "../utils/showToast";
 
-export default function UserMovieItem({ movie, onRemove }) {
+export default function UserMovieItem({ movie, onRemove, listType }) {
   const title = movie.title || movie.name;
   const releaseDate = movie.release_date || movie.first_air_date;
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  function handleConfirmRemove() {
+    onRemove(movie.id);
+    setShowConfirm(false);
+
+    showMovieToast({
+      type: listType,
+      added: false,
+      movieTitle: title,
+    });
+  }
 
   return (
     <div className="relative flex gap-3 rounded-xl bg-neutral-800 p-2">
@@ -21,10 +35,9 @@ export default function UserMovieItem({ movie, onRemove }) {
             ⭐ {movie.vote_average.toFixed(1)}
           </span>
           <button
-            onClick={() => onRemove(movie.id)}
+            onClick={() => setShowConfirm(true)}
             className="shrink-0 text-red-500 hover:text-red-400">
-            {" "}
-            <X size={14} />{" "}
+            <X size={14} />
           </button>
         </div>
 
@@ -42,6 +55,31 @@ export default function UserMovieItem({ movie, onRemove }) {
           ))}
         </div>
       </div>
+      {showConfirm && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/70 p-4 backdrop-blur-sm">
+          <div className="w-full rounded-xl border border-white/10 bg-neutral-900 p-4 shadow-xl">
+            <h3 className="text-sm font-semibold text-white">Remove movie?</h3>
+
+            <p className="mt-2 text-xs text-neutral-400">
+              Are you sure you want to remove "{title}"?
+            </p>
+
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="rounded-lg bg-neutral-800 px-3 py-2 text-xs text-neutral-300 transition hover:bg-neutral-700">
+                Cancel
+              </button>
+
+              <button
+                onClick={handleConfirmRemove}
+                className="rounded-lg bg-red-500 px-3 py-2 text-xs font-medium text-white transition hover:bg-red-600">
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

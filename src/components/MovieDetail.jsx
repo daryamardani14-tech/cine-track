@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Heart, Bookmark, Eye, Star } from "lucide-react";
 import { getMovies, saveMovies, STORAGE_KEYS } from "../utils/movieStorage";
+import { showMovieToast } from "../utils/showToast";
 
 export default function MovieDetail() {
   const { id } = useParams();
@@ -64,14 +65,37 @@ export default function MovieDetail() {
   function toggleMovie(key, isSelected, setIsSelected) {
     const movies = getMovies(key);
 
+    let newStatus;
+
     if (isSelected) {
       const updatedMovies = movies.filter(item => item.id !== movie.id);
-
       saveMovies(key, updatedMovies);
-      setIsSelected(false);
+      newStatus = false;
     } else {
       saveMovies(key, [...movies, movie]);
-      setIsSelected(true);
+      newStatus = true;
+    }
+
+    setIsSelected(newStatus);
+
+    const typeMap = {
+      [STORAGE_KEYS.favorites]: "favorite",
+      [STORAGE_KEYS.wishlists]: "wishlist",
+      [STORAGE_KEYS.watched]: "watched",
+    };
+
+    showMovieToast({
+      type: typeMap[key],
+      added: newStatus,
+      movieTitle: movie.title,
+    });
+
+    if (key === STORAGE_KEYS.wishlists && newStatus) {
+      setIsWatched(false);
+    }
+
+    if (key === STORAGE_KEYS.watched && newStatus) {
+      setIsWishlist(false);
     }
 
     window.dispatchEvent(new Event("movieListUpdated"));

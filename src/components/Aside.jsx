@@ -52,6 +52,7 @@ export default function Aside() {
               <UserMovieItem
                 movie={movie}
                 key={movie.id}
+                listType="favorite"
                 onRemove={movieId =>
                   removeMovie(STORAGE_KEYS.favorites, movieId)
                 }
@@ -80,6 +81,7 @@ export default function Aside() {
               <UserMovieItem
                 movie={movie}
                 key={movie.id}
+                listType="wishlist"
                 onRemove={movieId =>
                   removeMovie(STORAGE_KEYS.wishlists, movieId)
                 }
@@ -108,6 +110,7 @@ export default function Aside() {
               <UserMovieItem
                 movie={movie}
                 key={movie.id}
+                listType="watched"
                 onRemove={movieId => removeMovie(STORAGE_KEYS.watched, movieId)}
               />
             ))}
