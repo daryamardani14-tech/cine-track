@@ -87,7 +87,13 @@ export default function MovieDetail() {
       saveMovies(key, updatedMovies);
       newStatus = false;
     } else {
-      saveMovies(key, [...movies, movie]);
+      saveMovies(key, [
+        ...movies,
+        {
+          ...movie,
+          genre_ids: movie.genres?.map(genre => genre.id) || [],
+        },
+      ]);
       newStatus = true;
     }
 
@@ -180,9 +186,9 @@ export default function MovieDetail() {
             </div>
 
             <div className="max-w-3xl pt-2">
-              <h1 className="text-4xl font-bold md:text-5xl">{movie.title}</h1>
+              <h1 className="text-detail-title font-bold">{movie.title}</h1>
 
-              <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-neutral-300">
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-meta text-neutral-300">
                 <span>{movie.release_date?.slice(0, 4)}</span>
 
                 <span>•</span>
@@ -208,14 +214,13 @@ export default function MovieDetail() {
                   </span>
                 ))}
               </div>
-
-              <p className="mt-8 text-base leading-7 text-neutral-300">
+              <p className="mt-8 text-body text-neutral-300">
                 {movie.overview}
               </p>
 
               {director && (
                 <div className="mt-8">
-                  <p className="text-sm text-neutral-500">Director</p>
+                  <p className="text-meta text-neutral-500">Director</p>
 
                   <p className="mt-1 font-medium">{director.name}</p>
                 </div>
@@ -280,7 +285,7 @@ export default function MovieDetail() {
 
           {cast?.length > 0 && (
             <section className="mt-14 max-w-5xl">
-              <h2 className="mb-5 text-2xl font-bold">Cast</h2>
+              <h2 className="mb-5 text-section-title font-bold">Cast</h2>
 
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
                 {cast.map(person => (
@@ -301,7 +306,7 @@ export default function MovieDetail() {
                     )}
 
                     <div className="p-3">
-                      <p className="truncate text-sm font-semibold">
+                      <p className="truncate text-card-title font-semibold">
                         {person.name}
                       </p>
 

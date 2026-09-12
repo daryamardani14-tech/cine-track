@@ -121,13 +121,15 @@ export default function FeaturedMovie() {
       />
       <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
       <div className="absolute bottom-10 left-8 z-10">
-        <h2 className="mb-3 text-4xl font-bold">{title}</h2>
+        <h2 className="mb-3 text-4xl font-bold sm:text-3xl text-page-title">
+          {title}
+        </h2>
 
         <div className="flex flex-wrap gap-2">
           {genres?.map(genre => (
             <span
               key={genre}
-              className="rounded-full bg-white/10 px-3 py-1 text-sm backdrop-blur-md">
+              className="rounded-full bg-white/10 px-3 py-1 text-sm backdrop-blur-md sm:text-sm">
               {genre}
             </span>
           ))}

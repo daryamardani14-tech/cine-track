@@ -96,7 +96,7 @@ export default function MovieSection({ title, category, endpoint, isHome }) {
   return (
     <section className="mt-8">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold">{title}</h2>
+        <h2 className="text-section-title font-bold">{title}</h2>
 
         {isHome && (
           <div className="flex gap-2">

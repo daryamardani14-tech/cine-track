@@ -142,7 +142,7 @@ export default function Main({
 
       {selectedItem === "movies" ? (
         <section className="mt-8">
-          <h2 className="mb-4 text-xl font-bold">Movies</h2>
+          <h2 className="mb-4 text-xl font-bold text-section-title">Movies</h2>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {movies.map(movie => (

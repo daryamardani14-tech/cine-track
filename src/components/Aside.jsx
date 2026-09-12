@@ -38,7 +38,7 @@ export default function Aside() {
   }, []);
 
   return (
-    <aside className="h-screen w-[85vw] max-w-80 overflow-y-auto border-l border-white/10 bg-neutral-900/70 p-4 text-white backdrop-blur-xl sm:w-80 sm:p-6">
+    <aside className="h-screen w-[85vw] max-w-80 overflow-y-auto border-l border-white/10 bg-neutral-900/70 p-4 text-white backdrop-blur-xl sm:w-80 sm:p-6 hide-scrollbar">
       <h1 className="mb-12 text-xl font-bold tracking-wider">LIBRARY</h1>
 
       <h2 className="mt-15 mb-5 text-base font-bold tracking-wider text-white">

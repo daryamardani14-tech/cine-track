@@ -4,6 +4,7 @@ import { getMovies, toggleMovie, STORAGE_KEYS } from "../utils/movieStorage";
 import { useEffect, useState } from "react";
 import { showMovieToast } from "../utils/showToast";
 import { handleImageError } from "../utils/imageFallback";
+import { genreNames } from "../data/genreNames";
 
 export default function MovieCard({ movie }) {
   const title = movie.title || movie.name;
@@ -76,9 +77,9 @@ export default function MovieCard({ movie }) {
         />
 
         <div className="p-3">
-          <h3 className="mb-2 h-10 text-sm font-semibold">{title}</h3>
+          <h3 className="mb-2 h-10 text-card-title font-semibold">{title}</h3>
 
-          <div className="flex items-center justify-between text-xs text-neutral-400">
+          <div className="flex items-center justify-between text-meta text-neutral-400">
             <span>{releaseDate?.slice(0, 4)}</span>
 
             <span className="flex items-center gap-1">
