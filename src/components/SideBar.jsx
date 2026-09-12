@@ -43,7 +43,7 @@ export default function SideBar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden min-h-screen flex-col bg-neutral-900 p-6 text-white md:flex lg:w-56 xl:w-64">
+      <div className="sticky top-0 hidden h-screen flex-col bg-neutral-900 p-6 text-white md:flex lg:w-56 xl:w-64">
         <h1 className="mb-8 text-3xl font-bold">
           Watch
           <div className="inline-block h-1 w-1 bg-red-500"></div>

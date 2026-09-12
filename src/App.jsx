@@ -4,14 +4,25 @@ import Aside from "./components/Aside";
 import MovieDetail from "./components/MovieDetail";
 import Library from "./components/Library";
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import CustomCursor from "./components/CustomCursor";
+import useScrollRestoration from "./hooks/useScrollRestoration";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectedCategory =
+    location.pathname === "/" ? "home" : location.pathname.slice(1);
 
-  const [selectedCategory, setSelectedCategory] = useState("home");
+  useScrollRestoration();
+
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,7 +61,9 @@ function Dashboard() {
     <div className="relative flex min-h-screen">
       <SideBar
         selectedCategory={selectedCategory}
-        onSelectedCategory={setSelectedCategory}
+        onSelectedCategory={category => {
+          navigate(category === "home" ? "/" : `/${category}`);
+        }}
         searchQuery={searchQuery}
         onSearch={setSearchQuery}
         searchResults={searchResults}
@@ -94,6 +107,13 @@ export default function App() {
       <Toaster position="top-center" />
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/popular" element={<Dashboard />} />
+        <Route path="/top-rated" element={<Dashboard />} />
+        <Route path="/movies" element={<Dashboard />} />
+        <Route path="/tv-series" element={<Dashboard />} />
+        <Route path="/airing-today" element={<Dashboard />} />
+        <Route path="/all-movies" element={<Dashboard />} />
+
         <Route path="/movie/:id" element={<MovieDetail />} />
         <Route path="/library/:type" element={<Library />} />
       </Routes>
