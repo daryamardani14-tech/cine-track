@@ -4,6 +4,7 @@ import MovieSection from "./MovieSection";
 import MovieCard from "./MovieCard";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import SearchBar from "./SearchBar";
 
 export default function Main({
@@ -28,29 +29,48 @@ export default function Main({
   useEffect(() => {
     if (selectedItem !== "movies") return;
 
+    let ignore = false;
+
     async function getMovies() {
       const endpoints = ["popular", "top_rated", "upcoming", "now_playing"];
 
-      const responses = await Promise.all(
-        endpoints.map(endpoint =>
-          fetch(
-            `https://api.themoviedb.org/3/movie/${endpoint}?language=en-US&page=1`,
-            {
-              headers: {
-                Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-                accept: "application/json",
+      try {
+        const responses = await Promise.all(
+          endpoints.map(async endpoint => {
+            const response = await fetch(
+              `https://api.themoviedb.org/3/movie/${endpoint}?language=en-US&page=1`,
+              {
+                headers: {
+                  Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+                  accept: "application/json",
+                },
               },
-            },
-          ).then(response => response.json()),
-        ),
-      );
+            );
 
-      const allMovies = responses.flatMap(data => data.results);
+            if (!response.ok) {
+              throw new Error(`TMDB request failed: ${response.status}`);
+            }
 
-      setMovies(allMovies.slice(0, 16));
+            return response.json();
+          }),
+        );
+
+        if (ignore) return;
+
+        const allMovies = responses.flatMap(data => data.results);
+        setMovies(allMovies.slice(0, 16));
+      } catch (error) {
+        if (ignore) return;
+        console.error("Failed to load movies:", error);
+        toast.error("Failed to load");
+      }
     }
 
     getMovies();
+
+    return () => {
+      ignore = true;
+    };
   }, [selectedItem]);
 
   useEffect(() => {

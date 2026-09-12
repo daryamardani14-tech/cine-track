@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getMovies, toggleMovie, STORAGE_KEYS } from "../utils/movieStorage";
 import { useEffect, useState } from "react";
 import { showMovieToast } from "../utils/showToast";
+import { handleImageError } from "../utils/imageFallback";
 
 export default function MovieCard({ movie }) {
   const title = movie.title || movie.name;
@@ -70,6 +71,7 @@ export default function MovieCard({ movie }) {
         <img
           src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
           alt={title}
+          onError={handleImageError}
           className="aspect-[2/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
 

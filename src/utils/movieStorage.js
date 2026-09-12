@@ -1,3 +1,5 @@
+import { toast } from "react-hot-toast";
+
 const STORAGE_KEYS = {
   favorites: "cinetrack-favorites",
   wishlists: "cinetrack-wishlists",
@@ -5,13 +7,27 @@ const STORAGE_KEYS = {
 };
 
 export function getMovies(key) {
-  const movies = localStorage.getItem(key);
+  try {
+    const movies = localStorage.getItem(key);
 
-  return movies ? JSON.parse(movies) : [];
+    return movies ? JSON.parse(movies) : [];
+  } catch (error) {
+    console.error(`Failed to read "${key}" from storage:`, error);
+    return [];
+  }
 }
 
 export function saveMovies(key, movies) {
-  localStorage.setItem(key, JSON.stringify(movies));
+  try {
+    localStorage.setItem(key, JSON.stringify(movies));
+    return true;
+  } catch (error) {
+    console.error(`Failed to save "${key}" to storage:`, error);
+    toast.error(
+      "Couldn't save your changes. Your browser storage may be full or restricted.",
+    );
+    return false;
+  }
 }
 
 export function toggleMovie(key, movie) {
@@ -22,9 +38,9 @@ export function toggleMovie(key, movie) {
   if (movieExists) {
     const updatedMovies = movies.filter(item => item.id !== movie.id);
 
-    saveMovies(key, updatedMovies);
+    const success = saveMovies(key, updatedMovies);
 
-    return false;
+    return success ? false : true;
   }
 
   if (key === STORAGE_KEYS.wishlists) {
@@ -47,9 +63,9 @@ export function toggleMovie(key, movie) {
     saveMovies(STORAGE_KEYS.wishlists, updatedWishlistMovies);
   }
 
-  saveMovies(key, [...movies, movie]);
+  const success = saveMovies(key, [...movies, movie]);
 
-  return true;
+  return success;
 }
 
 export { STORAGE_KEYS };

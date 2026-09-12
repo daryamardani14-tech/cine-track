@@ -1,4 +1,5 @@
 import { Search, Library } from "lucide-react";
+import { handleImageError } from "../utils/imageFallback";
 
 export default function SearchBar({
   searchQuery,
@@ -43,6 +44,7 @@ export default function SearchBar({
                 <img
                   src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
                   alt={movie.title}
+                  onError={handleImageError}
                   className="h-14 w-10 rounded object-cover"
                 />
                 <div>

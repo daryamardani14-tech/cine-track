@@ -3,6 +3,7 @@ import Main from "./components/Main";
 import Aside from "./components/Aside";
 import MovieDetail from "./components/MovieDetail";
 import Library from "./components/Library";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { useEffect, useState } from "react";
 import {
   BrowserRouter,
@@ -11,17 +12,16 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import CustomCursor from "./components/CustomCursor";
-import useScrollRestoration from "./hooks/useScrollRestoration";
+import NotFound from "./components/NotFound";
+import { checkTmdbToken } from "./utils/checkEnv";
 
 function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedCategory =
     location.pathname === "/" ? "home" : location.pathname.slice(1);
-
-  useScrollRestoration();
 
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
@@ -34,27 +34,43 @@ function Dashboard() {
       return;
     }
 
+    let ignore = false;
+
     async function searchMovies() {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
-          searchQuery,
-        )}&language=en-US&page=1`,
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-            accept: "application/json",
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+            searchQuery,
+          )}&language=en-US&page=1`,
+          {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+              accept: "application/json",
+            },
           },
-        },
-      );
+        );
 
-      const data = await response.json();
+        if (!response.ok) {
+          throw new Error(`TMDB search failed: ${response.status}`);
+        }
 
-      if (!response.ok) return;
+        const data = await response.json();
 
-      setSearchResults(data.results);
+        if (ignore) return;
+        setSearchResults(data.results);
+      } catch (error) {
+        if (ignore) return;
+        console.error("Search failed:", error);
+        toast.error("جستجو انجام نشد. اتصال اینترنتت رو چک کن.");
+        setSearchResults([]);
+      }
     }
 
     searchMovies();
+
+    return () => {
+      ignore = true;
+    };
   }, [searchQuery]);
 
   return (
@@ -101,22 +117,26 @@ function Dashboard() {
 }
 
 export default function App() {
+  checkTmdbToken();
   return (
     <BrowserRouter>
       <CustomCursor />
       <Toaster position="top-center" />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/popular" element={<Dashboard />} />
-        <Route path="/top-rated" element={<Dashboard />} />
-        <Route path="/movies" element={<Dashboard />} />
-        <Route path="/tv-series" element={<Dashboard />} />
-        <Route path="/airing-today" element={<Dashboard />} />
-        <Route path="/all-movies" element={<Dashboard />} />
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/popular" element={<Dashboard />} />
+          <Route path="/top-rated" element={<Dashboard />} />
+          <Route path="/movies" element={<Dashboard />} />
+          <Route path="/tv-series" element={<Dashboard />} />
+          <Route path="/airing-today" element={<Dashboard />} />
+          <Route path="/all-movies" element={<Dashboard />} />
 
-        <Route path="/movie/:id" element={<MovieDetail />} />
-        <Route path="/library/:type" element={<Library />} />
-      </Routes>
+          <Route path="/movie/:id" element={<MovieDetail />} />
+          <Route path="/library/:type" element={<Library />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

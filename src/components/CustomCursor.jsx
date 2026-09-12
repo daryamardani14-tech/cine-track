@@ -5,8 +5,27 @@ export default function CustomCursor() {
   const mouse = useRef({ x: 0, y: 0 });
   const position = useRef({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [hasFinePointer, setHasFinePointer] = useState(false);
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia("(pointer: fine)");
+
+    setHasFinePointer(mediaQuery.matches);
+
+    function handleChange(event) {
+      setHasFinePointer(event.matches);
+    }
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasFinePointer) return;
+
     function handleMouseMove(event) {
       mouse.current.x = event.clientX;
       mouse.current.y = event.clientY;
@@ -47,7 +66,9 @@ export default function CustomCursor() {
       window.removeEventListener("mouseover", handleMouseOver);
       cancelAnimationFrame(animationFrame);
     };
-  }, [isHovering]);
+  }, [isHovering, hasFinePointer]);
+
+  if (!hasFinePointer) return null;
 
   return (
     <div

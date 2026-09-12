@@ -1,36 +1,60 @@
 import { useEffect, useState } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { genreNames } from "../data/genreNames";
+import { toast } from "react-hot-toast";
+import { handleImageError } from "../utils/imageFallback";
 
 export default function FeaturedMovie() {
   const [movies, setMovies] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [isChanging, setIsChanging] = useState(false);
+  const [error, setError] = useState(false);
   const imagePosition = "100% 10%";
 
   useEffect(() => {
+    let ignore = false;
+
     async function getMovies() {
-      const response = await fetch(
-        "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-            accept: "application/json",
+      try {
+        const response = await fetch(
+          "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
+          {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+              accept: "application/json",
+            },
           },
-        },
-      );
+        );
 
-      const data = await response.json();
+        if (!response.ok) {
+          throw new Error(`TMDB request failed: ${response.status}`);
+        }
 
-      if (!response.ok) return;
+        const data = await response.json();
 
-      setMovies(data.results);
+        if (ignore) return;
 
-      const randomIndex = Math.floor(Math.random() * data.results.length);
-      setCurrentIndex(randomIndex);
+        if (!data.results || data.results.length === 0) {
+          throw new Error("No movies returned");
+        }
+
+        setMovies(data.results);
+
+        const randomIndex = Math.floor(Math.random() * data.results.length);
+        setCurrentIndex(randomIndex);
+      } catch (err) {
+        if (ignore) return;
+        console.error("Failed to load featured movie:", err);
+        setError(true);
+        toast.error("Failed to load featured movie.");
+      }
     }
 
     getMovies();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   function handleNext() {
@@ -72,6 +96,14 @@ export default function FeaturedMovie() {
     return () => clearInterval(interval);
   }, [movies.length, currentIndex]);
 
+  if (error) {
+    return (
+      <section className="relative flex h-[360px] items-center justify-center bg-neutral-900 text-neutral-500 sm:h-[480px]">
+        Featured movie unavailable right now.
+      </section>
+    );
+  }
+
   if (movies.length === 0 || currentIndex === null) return null;
 
   const movie = movies[currentIndex];
@@ -87,6 +119,7 @@ export default function FeaturedMovie() {
       <img
         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
         alt={title}
+        onError={handleImageError}
         className={`absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-700 ${
           isChanging ? "opacity-0" : "opacity-100"
         }`}

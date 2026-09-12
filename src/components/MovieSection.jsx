@@ -1,6 +1,7 @@
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import MovieCard from "./MovieCard";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
 
 export default function MovieSection({ title, category, endpoint, isHome }) {
   const [movieData, setMovieData] = useState([]);
@@ -10,6 +11,8 @@ export default function MovieSection({ title, category, endpoint, isHome }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let ignore = false;
+
     async function getMovies() {
       setLoading(true);
 
@@ -18,32 +21,47 @@ export default function MovieSection({ title, category, endpoint, isHome }) {
           ? `https://api.themoviedb.org/3/discover/movie?language=en-US&page=${page}`
           : `https://api.themoviedb.org/3/${category}/${endpoint}?language=en-US&page=1`;
 
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-          accept: "application/json",
-        },
-      });
+      try {
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+            accept: "application/json",
+          },
+        });
 
-      const data = await response.json();
+        if (!response.ok) {
+          throw new Error(`TMDB request failed: ${response.status}`);
+        }
 
-      if (!response.ok) {
-        setLoading(false);
-        return;
+        const data = await response.json();
+
+        if (ignore) return;
+
+        if (endpoint === "discover") {
+          setMovieData(currentMovies => [...currentMovies, ...data.results]);
+          setHasMore(page < data.total_pages);
+        } else {
+          setMovieData(data.results);
+        }
+      } catch (error) {
+        if (ignore) return;
+        console.error(`Failed to load "${title}" section:`, error);
+        toast.error(`Failed to load "${title}".`);
+
+        if (endpoint === "discover") {
+          setHasMore(false);
+        }
+      } finally {
+        if (!ignore) setLoading(false);
       }
-
-      if (endpoint === "discover") {
-        setMovieData(currentMovies => [...currentMovies, ...data.results]);
-        setHasMore(page < data.total_pages);
-      } else {
-        setMovieData(data.results);
-      }
-
-      setLoading(false);
     }
 
     getMovies();
-  }, [category, endpoint, page]);
+
+    return () => {
+      ignore = true;
+    };
+  }, [category, endpoint, page, title]);
 
   useEffect(() => {
     if (endpoint !== "discover") return;

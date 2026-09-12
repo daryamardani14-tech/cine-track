@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Heart, Bookmark, Eye, Star } from "lucide-react";
 import { getMovies, saveMovies, STORAGE_KEYS } from "../utils/movieStorage";
 import { showMovieToast } from "../utils/showToast";
+import { toast } from "react-hot-toast";
+import { handleImageError } from "../utils/imageFallback";
 
 export default function MovieDetail() {
   const { id } = useParams();
@@ -10,56 +12,81 @@ export default function MovieDetail() {
 
   const [movie, setMovie] = useState(null);
   const [credits, setCredits] = useState(null);
+  const [error, setError] = useState(false);
 
   const [isFavorite, setIsFavorite] = useState(false);
   const [isWishlist, setIsWishlist] = useState(false);
   const [isWatched, setIsWatched] = useState(false);
 
   useEffect(() => {
+    let ignore = false;
+
     async function getMovieDetails() {
+      setError(false);
+      setMovie(null);
+
       const headers = {
         Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
         accept: "application/json",
       };
 
-      const [movieResponse, creditsResponse] = await Promise.all([
-        fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, {
-          headers,
-        }),
-        fetch(
-          `https://api.themoviedb.org/3/movie/${id}/credits?language=en-US`,
-          {
+      try {
+        const [movieResponse, creditsResponse] = await Promise.all([
+          fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, {
             headers,
-          },
-        ),
-      ]);
+          }),
+          fetch(
+            `https://api.themoviedb.org/3/movie/${id}/credits?language=en-US`,
+            {
+              headers,
+            },
+          ),
+        ]);
 
-      const movieData = await movieResponse.json();
-      const creditsData = await creditsResponse.json();
+        if (!movieResponse.ok || !creditsResponse.ok) {
+          throw new Error(
+            `TMDB request failed: ${movieResponse.status} / ${creditsResponse.status}`,
+          );
+        }
 
-      if (!movieResponse.ok || !creditsResponse.ok) return;
+        const movieData = await movieResponse.json();
+        const creditsData = await creditsResponse.json();
 
-      setMovie(movieData);
-      setCredits(creditsData);
+        if (ignore) return;
 
-      setIsFavorite(
-        getMovies(STORAGE_KEYS.favorites).some(
-          item => item.id === movieData.id,
-        ),
-      );
+        setMovie(movieData);
+        setCredits(creditsData);
 
-      setIsWishlist(
-        getMovies(STORAGE_KEYS.wishlists).some(
-          item => item.id === movieData.id,
-        ),
-      );
+        setIsFavorite(
+          getMovies(STORAGE_KEYS.favorites).some(
+            item => item.id === movieData.id,
+          ),
+        );
 
-      setIsWatched(
-        getMovies(STORAGE_KEYS.watched).some(item => item.id === movieData.id),
-      );
+        setIsWishlist(
+          getMovies(STORAGE_KEYS.wishlists).some(
+            item => item.id === movieData.id,
+          ),
+        );
+
+        setIsWatched(
+          getMovies(STORAGE_KEYS.watched).some(
+            item => item.id === movieData.id,
+          ),
+        );
+      } catch (err) {
+        if (ignore) return;
+        console.error("Failed to load movie details:", err);
+        setError(true);
+        toast.error("Failed to load movie details");
+      }
     }
 
     getMovieDetails();
+
+    return () => {
+      ignore = true;
+    };
   }, [id]);
 
   function toggleMovie(key, isSelected, setIsSelected) {
@@ -101,6 +128,22 @@ export default function MovieDetail() {
     window.dispatchEvent(new Event("movieListUpdated"));
   }
 
+  if (error) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-neutral-950 text-white">
+        <p className="text-lg font-medium">
+          Video not found. An error occurred.
+        </p>
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 rounded-lg border-2 border-red-500/60 bg-neutral-900 px-4 py-2 text-sm text-red-500 transition hover:bg-red-500/10">
+          <ArrowLeft size={18} />
+          Back
+        </button>
+      </div>
+    );
+  }
+
   if (!movie) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-950 text-white">
@@ -122,6 +165,7 @@ export default function MovieDetail() {
         <img
           src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
           alt={movie.title}
+          onError={handleImageError}
           className="absolute inset-0 h-full w-full object-cover"
         />
 
@@ -142,6 +186,7 @@ export default function MovieDetail() {
               <img
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                 alt={movie.title}
+                onError={handleImageError}
                 className="w-64 rounded-2xl shadow-2xl md:w-72"
               />
             </div>
