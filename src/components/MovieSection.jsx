@@ -18,16 +18,11 @@ export default function MovieSection({ title, category, endpoint, isHome }) {
 
       const url =
         endpoint === "discover"
-          ? `https://api.themoviedb.org/3/discover/movie?language=en-US&page=${page}`
-          : `https://api.themoviedb.org/3/${category}/${endpoint}?language=en-US&page=1`;
+          ? `/api/tmdb/discover/movie?language=en-US&page=${page}`
+          : `/api/tmdb/${category}/${endpoint}?language=en-US&page=1`;
 
       try {
-        const response = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-            accept: "application/json",
-          },
-        });
+        const response = await fetch(url);
 
         if (!response.ok) {
           throw new Error(`TMDB request failed: ${response.status}`);

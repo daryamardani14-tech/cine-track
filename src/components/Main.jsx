@@ -38,13 +38,7 @@ export default function Main({
         const responses = await Promise.all(
           endpoints.map(async endpoint => {
             const response = await fetch(
-              `https://api.themoviedb.org/3/movie/${endpoint}?language=en-US&page=1`,
-              {
-                headers: {
-                  Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-                  accept: "application/json",
-                },
-              },
+              `/api/tmdb/movie/${endpoint}?language=en-US&page=1`,
             );
 
             if (!response.ok) {
@@ -62,7 +56,7 @@ export default function Main({
       } catch (error) {
         if (ignore) return;
         console.error("Failed to load movies:", error);
-        toast.error("Failed to load");
+        toast.error("Failed to load movies. Please try again.");
       }
     }
 

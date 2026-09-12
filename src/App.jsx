@@ -4,6 +4,7 @@ import Aside from "./components/Aside";
 import MovieDetail from "./components/MovieDetail";
 import Library from "./components/Library";
 import ErrorBoundary from "./components/ErrorBoundary";
+import NotFound from "./components/NotFound";
 import { useEffect, useState } from "react";
 import {
   BrowserRouter,
@@ -14,12 +15,12 @@ import {
 } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import CustomCursor from "./components/CustomCursor";
-import NotFound from "./components/NotFound";
-import { checkTmdbToken } from "./utils/checkEnv";
+import useScrollRestoration from "./hooks/useScrollRestoration";
 
 function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
+  useScrollRestoration();
   const selectedCategory =
     location.pathname === "/" ? "home" : location.pathname.slice(1);
 
@@ -39,15 +40,9 @@ function Dashboard() {
     async function searchMovies() {
       try {
         const response = await fetch(
-          `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+          `/api/tmdb/search/movie?query=${encodeURIComponent(
             searchQuery,
           )}&language=en-US&page=1`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-              accept: "application/json",
-            },
-          },
         );
 
         if (!response.ok) {
@@ -61,7 +56,7 @@ function Dashboard() {
       } catch (error) {
         if (ignore) return;
         console.error("Search failed:", error);
-        toast.error("جستجو انجام نشد. اتصال اینترنتت رو چک کن.");
+        toast.error("Search failed. Check your internet connection.");
         setSearchResults([]);
       }
     }
@@ -117,7 +112,6 @@ function Dashboard() {
 }
 
 export default function App() {
-  checkTmdbToken();
   return (
     <BrowserRouter>
       <CustomCursor />

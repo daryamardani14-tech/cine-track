@@ -25,22 +25,10 @@ export default function MovieDetail() {
       setError(false);
       setMovie(null);
 
-      const headers = {
-        Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-        accept: "application/json",
-      };
-
       try {
         const [movieResponse, creditsResponse] = await Promise.all([
-          fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, {
-            headers,
-          }),
-          fetch(
-            `https://api.themoviedb.org/3/movie/${id}/credits?language=en-US`,
-            {
-              headers,
-            },
-          ),
+          fetch(`/api/tmdb/movie/${id}?language=en-US`),
+          fetch(`/api/tmdb/movie/${id}/credits?language=en-US`),
         ]);
 
         if (!movieResponse.ok || !creditsResponse.ok) {
@@ -78,7 +66,7 @@ export default function MovieDetail() {
         if (ignore) return;
         console.error("Failed to load movie details:", err);
         setError(true);
-        toast.error("Failed to load movie details");
+        toast.error("Failed to load movie details.");
       }
     }
 
@@ -132,7 +120,7 @@ export default function MovieDetail() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-neutral-950 text-white">
         <p className="text-lg font-medium">
-          Video not found. An error occurred.
+          Movie not found or something went wrong.
         </p>
         <button
           onClick={() => navigate(-1)}
@@ -303,6 +291,7 @@ export default function MovieDetail() {
                       <img
                         src={`https://image.tmdb.org/t/p/w185${person.profile_path}`}
                         alt={person.name}
+                        onError={handleImageError}
                         className="h-48 w-full object-cover"
                       />
                     ) : (
